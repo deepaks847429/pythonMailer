@@ -1,0 +1,30 @@
+name: "send email after workflow run"
+
+on:
+  workflow_diapatch:
+
+jobs:
+    send_email:
+        runs-on: ubuntu-latest
+        steps:
+            - name: "checkout code"
+              uses: actions/checkout@v2
+            - name: "send python environment"
+              uses: actions/setup-python@v2
+              with:
+                    python-version: "3.x"
+
+            - name: "install dependencies"
+              run: |
+                    python -m pip install --upgrade pip
+                    pip install smtplib email
+
+            - name: "send email"
+              run: python script.py
+              env:
+                WORKFLOW_NAME: ${{github.workflow}}
+                REPO_NAME: ${{github.repository}}
+                WORKFLOW_RUN_ID: ${{github.run_id}}
+                SENDER_PASSWORD: ${{secrets.SENDER_PASSWORD}}
+                SENDER_EMAIL: ${{secrets.SENDER_EMAIL}}
+                RECEIVER_EMAIL: ${{secrets.RECEIVER_EMAIL}}
